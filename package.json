@@ -2,7 +2,7 @@
   "author": {
     "name": "Martin K. Schröder"
   },
-  "name": "php",
+  "name": "node-php",
   "description": "Node JS modules for running wordpress in node js",
   "version": "0.0.1",
   "repository": {

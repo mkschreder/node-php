@@ -1,4 +1,4 @@
-->![Node PHP](https://raw2.github.com/mkschreder/siteboot_php/master/node_php_small.jpg)<-
+<center>![Node PHP](https://raw2.github.com/mkschreder/siteboot_php/master/node_php_small.jpg)</center>
 NodePHP - run wordpress (and other php scripts) with node
 ---------------------------------
 

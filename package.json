@@ -1,0 +1,27 @@
+{
+  "author": {
+    "name": "Martin K. Schröder"
+  },
+  "name": "php",
+  "description": "Node JS modules for running wordpress in node js",
+  "version": "0.0.1",
+  "repository": {
+    "url": "https://github.com/mkschreder/siteboot_php.git"
+  },
+  "main": "./main.js",
+  "bin": {},
+  "dependencies": {
+  },
+  "devDependencies": {
+		"cluster": "*", 
+		"express": "*", 
+		"request": "*"
+	},
+  "optionalDependencies": {},
+  "engines": {
+    "node": "*"
+  },
+  "scripts": {
+		"test": "nodeunit tests"
+  }
+}

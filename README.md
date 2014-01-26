@@ -1,4 +1,4 @@
-<img style="float: right; width: 200px;" src="https://raw2.github.com/mkschreder/siteboot_php/master/node_php_small.jpg"/>
+->![Node PHP](https://raw2.github.com/mkschreder/siteboot_php/master/node_php_small.jpg)<-
 NodePHP - run wordpress (and other php scripts) with node
 ---------------------------------
 

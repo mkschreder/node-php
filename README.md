@@ -29,7 +29,9 @@ To run wordpress with node js and express do this:
 Explanation
 -----------
 
-The script will pipe all fils that end in the .php extension through the php parser. All other files will be served raw. 
+The script will pipe all files that end in the .php extension through the php parser. All other files will be served as static content. 
+
+Basic permalinks are supported but the support for them can probably be improved. 
 
 Dependencies
 ------------

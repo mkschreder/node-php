@@ -33,7 +33,7 @@ function runPHP(req, response, next, phpdir){
     REQUEST_URI: req.url, //The original request URI sent by the client.
     REQUEST_METHOD: req.method, //The method used by the current request; usually set to GET or POST.
     QUERY_STRING: parts.query||"", //The information which follows the ? character in the requested URL.
-    CONTENT_TYPE: req.get("Content-type"), //"multipart/form-data", //"application/x-www-form-urlencoded", //The MIME type of the request body; set only for POST or PUT requests.
+    CONTENT_TYPE: req.get("Content-type")||"", //"multipart/form-data", //"application/x-www-form-urlencoded", //The MIME type of the request body; set only for POST or PUT requests.
     CONTENT_LENGTH: req.rawBody.length||0, //The length in bytes of the request body; set only for POST or PUT requests.
     AUTH_TYPE: "", //The authentication type if the client has authenticated itself to access the script.
     AUTH_USER: "", 
@@ -58,11 +58,6 @@ function runPHP(req, response, next, phpdir){
   
   Object.keys(req.headers).map(function(x){return env["HTTP_"+x.toUpperCase().replace("-", "_")] = req.headers[x];}); 
   
-  //console.log(env); 
-  //console.log("ALL: "+env.ALL_HTTP); 
-	//console.log("GET: "+file); 
-  //console.log("RAW BODY: "+req.rawBody); 
-  
 	if(/.*?\.php$/.test(file)){
 		var res = "", err = ""; 
 		
@@ -72,8 +67,12 @@ function runPHP(req, response, next, phpdir){
 		
 		//php.stdin.resume(); 
 		//console.log(req.rawBody); 
+		//(new Stream(req.rawBody)).pipe(php.stdin); 
+		/*.on("error", function(){}); */
 		php.stdin.write(req.rawBody); 
-		php.stdin.end(); 
+		//php.stdin.write("\n"); 
+		
+		//php.stdin.end(); 
 		
 		php.stdout.on("data", function(data){
 			//console.log(data.toString()); 
@@ -87,6 +86,8 @@ function runPHP(req, response, next, phpdir){
 		}); 
 		php.on("exit", function(){
 			// extract headers 
+			php.stdin.end(); 
+			 
 			var lines = res.split("\r\n"); 
 			var line = 0; 
 			var html = ""; 
@@ -95,7 +96,7 @@ function runPHP(req, response, next, phpdir){
 					var m = lines[line].split(": "); 
 					if(m[0] === "") break; 
 					
-					console.log("HEADER: "+m[0]+": "+m[1]); 
+					//console.log("HEADER: "+m[0]+": "+m[1]); 
 					if(m[0] == "Status"){
 						response.statusCode = parseInt(m[1]); 
 					}
@@ -136,6 +137,7 @@ exports.cgi = function(phproot){
     });
     req.on('end', function() {
 			req.rawBody = data||"";
+			//console.log(req.rawBody); 
 			//console.log("ENCODING: "+req.get("Content-type")+", len: "+req.rawBody.length); 
 			runPHP(req, res, next, phproot);
     });

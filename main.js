@@ -59,7 +59,7 @@ function runPHP(req, response, next, phpdir){
   
   //console.log(env); 
   //console.log("ALL: "+env.ALL_HTTP); 
-	//console.log("GET: "+file); 
+	console.log("GET: "+file); 
   //console.log("RAW BODY: "+req.rawBody); 
   
 	if(/.*?\.php$/.test(file)){
@@ -115,7 +115,7 @@ function runPHP(req, response, next, phpdir){
 	} else {
 		response.sendfile(file);
 		//response.end(); 
-		next(); 
+		//next(); 
 	}
 }
 

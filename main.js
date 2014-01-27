@@ -21,6 +21,7 @@ function runPHP(req, response, next, phpdir){
 	else pathinfo = parts.pathname; 
 	
 	var env = {
+		SERVER_SIGNATURE: "NodeJS server at localhost", 
 		PATH_INFO: pathinfo, //The extra path information, as given in the requested URL. In fact, scripts can be accessed by their virtual path, followed by extra information at the end of this path. The extra information is sent in PATH_INFO.
     PATH_TRANSLATED: "", //The virtual-to-real mapped version of PATH_INFO.
     SCRIPT_NAME: parts.pathname, //The virtual path of the script being executed.
@@ -31,8 +32,8 @@ function runPHP(req, response, next, phpdir){
     SCRIPT_URL: req.url, 
     REQUEST_URI: req.url, //The original request URI sent by the client.
     REQUEST_METHOD: req.method, //The method used by the current request; usually set to GET or POST.
-    QUERY_STRING: parts.query, //The information which follows the ? character in the requested URL.
-    CONTENT_TYPE: "application/x-www-form-urlencoded", //The MIME type of the request body; set only for POST or PUT requests.
+    QUERY_STRING: parts.query||"", //The information which follows the ? character in the requested URL.
+    CONTENT_TYPE: req.get("Content-type"), //"multipart/form-data", //"application/x-www-form-urlencoded", //The MIME type of the request body; set only for POST or PUT requests.
     CONTENT_LENGTH: req.rawBody.length||0, //The length in bytes of the request body; set only for POST or PUT requests.
     AUTH_TYPE: "", //The authentication type if the client has authenticated itself to access the script.
     AUTH_USER: "", 
@@ -59,7 +60,7 @@ function runPHP(req, response, next, phpdir){
   
   //console.log(env); 
   //console.log("ALL: "+env.ALL_HTTP); 
-	console.log("GET: "+file); 
+	//console.log("GET: "+file); 
   //console.log("RAW BODY: "+req.rawBody); 
   
 	if(/.*?\.php$/.test(file)){
@@ -70,7 +71,8 @@ function runPHP(req, response, next, phpdir){
 		}); 
 		
 		//php.stdin.resume(); 
-		php.stdin.write(req.rawBody+"\n"); 
+		//console.log(req.rawBody); 
+		php.stdin.write(req.rawBody); 
 		php.stdin.end(); 
 		
 		php.stdout.on("data", function(data){
@@ -93,7 +95,7 @@ function runPHP(req, response, next, phpdir){
 					var m = lines[line].split(": "); 
 					if(m[0] === "") break; 
 					
-					//console.log("HEADER: "+m[0]+": "+m[1]); 
+					console.log("HEADER: "+m[0]+": "+m[1]); 
 					if(m[0] == "Status"){
 						response.statusCode = parseInt(m[1]); 
 					}
@@ -102,12 +104,13 @@ function runPHP(req, response, next, phpdir){
 					}
 					line++; 
 				} while(lines[line] !== ""); 
+				
 				html = lines.splice(line+1).join("\n"); 
 			} else {
 				html = res; 
 			}
 			//console.log("STATUS: "+response.statusCode); 
-			
+			//console.log(html); 
 			response.send(html, response.statusCode); 
 			response.end(); 
 		}); 
@@ -121,13 +124,19 @@ function runPHP(req, response, next, phpdir){
 
 exports.cgi = function(phproot){
 	return function(req, res, next){
-    var data = '';
-    req.setEncoding('utf8');
+    var data = null;
+    
+    //req.setEncoding('utf8');
     req.on('data', function(chunk) { 
-			data += chunk;
+			//data.write(chunk.toString('binary'), data.length, chunk.length, 'binary');
+			//console.log(chunk); 
+			if(!data) data = chunk; 
+			else data = data+chunk; 
+			//data = data.concat(chunk); 
     });
     req.on('end', function() {
-			req.rawBody = data;
+			req.rawBody = data||"";
+			//console.log("ENCODING: "+req.get("Content-type")+", len: "+req.rawBody.length); 
 			runPHP(req, res, next, phproot);
     });
 	}

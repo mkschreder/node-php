@@ -68,7 +68,7 @@ function runPHP(req, response, next, phpdir){
 		//php.stdin.resume(); 
 		//console.log(req.rawBody); 
 		//(new Stream(req.rawBody)).pipe(php.stdin); 
-		/*.on("error", function(){}); */
+		php.stdin.on("error", function(){}); 
 		php.stdin.write(req.rawBody); 
 		//php.stdin.write("\n"); 
 		

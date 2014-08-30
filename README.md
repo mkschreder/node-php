@@ -15,7 +15,7 @@ Usage
 To run wordpress with node js and express do this: 
 
 	var express = require('express');
-	var php = require("php"); 
+	var php = require("node-php"); 
 	var path = require("path"); 
 	
 	var app = express();

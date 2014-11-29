@@ -112,12 +112,12 @@ function runPHP(req, response, next, phpdir){
 			}
 			//console.log("STATUS: "+response.statusCode); 
 			//console.log(html); 
-			response.send(html, response.statusCode); 
+			response.status(response.statusCode).send(html); 
 			response.end(); 
 		}); 
 		
 	} else {
-		response.sendfile(file);
+		response.sendFile(file);
 		//response.end(); 
 		//next(); 
 	}

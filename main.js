@@ -46,7 +46,7 @@ function runPHP(req, response, next, phpdir){
     SERVER_PORT: 8011, //The port to which the request was sent.
     GATEWAY_INTERFACE: "CGI/1.1", //The CGI Specification version supported by the web server; always set to CGI/1.1.
     SERVER_PROTOCOL: "", //The HTTP protocol version used by the current request.
-    REMOTE_ADDR: "", //The IP address of the computer that sent the request.
+    REMOTE_ADDR: req.headers['x-forwarded-for'] || req.connection.remoteAddress || req.socket.remoteAddress || req.connection.socket.remoteAddress, //The IP address of the computer that sent the request.
     REMOTE_PORT: "", //The port from which the request was sent.
     DOCUMENT_ROOT: "", //The absolute path of the web site files. It has the same value as Documents Path.
     INSTANCE_ID: "", //The numerical identifier of the host which served the request. On Abyss Web Server X1, it is always set to 1 since there is only a single host.

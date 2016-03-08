@@ -1,3 +1,6 @@
+// License: MIT
+// Copyright (c) 2014-2016 Martin K. Schröder <mkschreder.uk@gmail.com>
+
 var url = require("url");
 var child = require("child_process");
 var path = require("path");

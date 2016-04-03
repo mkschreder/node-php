@@ -1,6 +1,7 @@
-<center>![Node PHP](https://raw2.github.com/mkschreder/siteboot_php/master/node_php_small.jpg)</center>
+<center>![Node PHP](https://raw.githubusercontent.com/mkschreder/node-php/master/node_php_small.jpg)</center>
+
 NodePHP - run wordpress (and other php scripts) with node
----------------------------------
+---------------------------------------------------------
 
 With Node PHP you can leverage the speed of node js and run all of the widely available php scripts directly inside your express site. 
 
@@ -8,7 +9,7 @@ Installation
 ------------
 
 	npm install node-php
-	
+
 Usage
 -----
 

@@ -11,17 +11,18 @@
   "main": "./main.js",
   "bin": {},
   "dependencies": {
+    "shelljs": "^0.6.0"
   },
   "devDependencies": {
-		"cluster": "*", 
-		"express": "*", 
-		"request": "*"
-	},
+    "express": "*",
+    "mocha": "*",
+    "supertest": "*"
+  },
   "optionalDependencies": {},
   "engines": {
     "node": "*"
   },
   "scripts": {
-		"test": "nodeunit tests"
+    "test": "mocha tests"
   }
 }

@@ -14,15 +14,15 @@
     "shelljs": "^0.6.0"
   },
   "devDependencies": {
+    "eslint": "*",
     "express": "*",
     "mocha": "*",
     "supertest": "*"
   },
-  "optionalDependencies": {},
   "engines": {
     "node": "*"
   },
   "scripts": {
-    "test": "mocha tests"
+    "test": "eslint '*.js' test && mocha"
   }
 }

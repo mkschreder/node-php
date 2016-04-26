@@ -1,3 +1,5 @@
+/* eslint-env mocha */
+
 var request = require('supertest');
 var assert = require('chai').assert;
 var express = require('express');
@@ -22,7 +24,7 @@ describe('GET /', function() {
         }
         done();
       });
-  })
+  });
 });
 
 describe('Get /index.php', function() {
@@ -40,5 +42,5 @@ describe('Get /index.php', function() {
         }
         done();
       });
-  })
+  });
 });

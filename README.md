@@ -1,5 +1,3 @@
-<center>![Node PHP](https://raw.githubusercontent.com/mkschreder/node-php/master/node_php_small.jpg)</center>
-
 NodePHP - run wordpress (and other php scripts) with node
 ---------------------------------------------------------
 

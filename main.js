@@ -9,7 +9,7 @@ var path = require('path');
 var fs = require('fs');
 var shell = require('shelljs');
 
-var PHP_CGI = shell.which('php-cgi').toString();
+var PHP_CGI = shell.which('php-cgi');
 
 if (!PHP_CGI) {
   throw new Error('"php-cgi" cannot be found');
@@ -150,7 +150,7 @@ function runPHP(req, response, next, url, file) {
   if (/.*?\.php$/.test(file)) {
     var res = '', err = '';
 
-    var php = child.spawn(PHP_CGI, [], {
+    var php = child.spawn(PHP_CGI.toString(), [], {
       env: env
     });
 

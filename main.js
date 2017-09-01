@@ -190,10 +190,10 @@ function runPHP(req, response, next, url, file) {
           if (m[0] == 'Status') {
             response.statusCode = parseInt(m[1]);
           }
-          if (m[0] == "Set-Cookie") {
-            var prevCookies = response.getHeader("Set-Cookie");
+          if (m[0] == 'Set-Cookie') {
+            var prevCookies = response.getHeader('Set-Cookie');
             if (prevCookies) {
-              if (typeof prevCookies == "string") {
+              if (typeof prevCookies == 'string') {
                 m[1] = [prevCookies, m[1]];
               } else {
                 prevCookies.push(m[1]);

@@ -9,7 +9,7 @@ var path = require('path');
 var fs = require('fs');
 var shell = require('shelljs');
 
-var PHP_CGI = shell.which('php-cgi');
+var PHP_CGI = shell.which('php-cgi').toString();
 
 if (!PHP_CGI) {
   throw new Error('"php-cgi" cannot be found');
@@ -189,6 +189,10 @@ function runPHP(req, response, next, url, file) {
           // console.log('HEADER: '+m[0]+': '+m[1]);
           if (m[0] == 'Status') {
             response.statusCode = parseInt(m[1]);
+          }
+				  if (m[0] == 'Set-Cookie') {
+				    var prevCookies = response.getHeader('Set-Cookie');
+				    m[1] = prevCookies ? [prevCookies, m[1]] : m[1];
           }
           if (m.length == 2) {
             response.setHeader(m[0], m[1]);

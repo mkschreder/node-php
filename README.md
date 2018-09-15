@@ -43,7 +43,10 @@ Basic permalinks are supported but the support for them can probably be improved
 Dependencies
 ------------
 
-* php-cgi - you need to have the interpreter installed in order to use this extension
+# php-cgi
+
+* You need to have the interpreter installed in the system in order to use this extension.
+* Alternatively, You can specify the full path of locally available/uninstalled php-cgi path in order to use this extension. If not custom path not specified in express, it tries to find the system installed php-cgi executable. If still unavailable it errors out.
 
 License
 -------

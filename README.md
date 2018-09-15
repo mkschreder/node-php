@@ -46,7 +46,7 @@ Dependencies
 # php-cgi
 
 * You need to have the interpreter installed in the system in order to use this extension.
-* Alternatively, You can specify the full path of locally available/uninstalled php-cgi path in order to use this extension. If not custom path not specified in express, it tries to find the system installed php-cgi executable. If still unavailable it errors out.
+* Alternatively, You can specify the full path of locally available php-cgi path. If custom path not specified in express, it tries to find the system installed php-cgi executable. If still unavailable, the server errors out.
 
 License
 -------

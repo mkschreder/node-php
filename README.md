@@ -22,7 +22,11 @@ var path = require("path");
 
 var app = express();
 
-app.use("/", php.cgi("/path/to/wordpress")); 
+// Following works without a path and PHP-CGI installed in system
+// app.use("/", php.cgi("/path/to/wordpress"), ''); 
+
+// Following is the path for PHP-CGI that you want to use for the application
+app.use("/", php.cgi("/path/to/wordpress"), '/usr/bin/'); 
 
 app.listen(9090);
 

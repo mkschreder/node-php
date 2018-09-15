@@ -22,10 +22,10 @@ var path = require("path");
 
 var app = express();
 
-// Following works without a path and PHP-CGI installed in system
+// Following without a local copy of PHP-CGI works without a path and tries to use PHP-CGI installed in system
 // app.use("/", php.cgi("/path/to/wordpress"), ''); 
 
-// Following is the path for PHP-CGI that you want to use for the application
+// Following uses a path in second argument defining the local copy of PHP-CGI that you want to use for the application
 app.use("/", php.cgi("/path/to/wordpress"), '/usr/bin/'); 
 
 app.listen(9090);

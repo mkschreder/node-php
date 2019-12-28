@@ -1,7 +1,12 @@
-NodePHP - run wordpress (and other php scripts) with node
+
+NodePHPEmbedded - run php scripts like wordpress, drupal, etc with node
 ---------------------------------------------------------
 
-With Node PHP you can leverage the speed of node js and run all of the widely available php scripts directly inside your express site. 
+With Node PHP Embedded you can leverage the speed of node js and run all of the widely available php scripts directly inside your express site. 
+
+This is a fork of http://github.com/mkschreder/node-php and has been modified for making this take dynamic PHP pathing, so that it can run without a PHP distribution installed on a machine and can work with an embedded PHP binary distribution.
+
+
 
 Installation
 ------------
@@ -13,7 +18,7 @@ npm install node-php
 Usage
 -----
 
-To run wordpress with node js and express do this: 
+To run php scripts with node js and express create the following script like below: 
 
 ```javascript
 var express = require('express');
@@ -22,11 +27,14 @@ var path = require("path");
 
 var app = express();
 
+// Following is the structure for providing the decalration of paths
+// app.use("/", php.cgi("/path/to/phpscript"), '/path/to/php.exe', '/path/to/php.ini'); 
+
 // Following works without a local PHP-CGI path and tries to use PHP-CGI installed in system by default
-// app.use("/", php.cgi("/path/to/wordpress"), ''); 
+// app.use("/", php.cgi("/path/to/phpscript"), '', ''); 
 
 // Following uses a path in second argument defining the local copy of PHP-CGI that you want to use for the application
-app.use("/", php.cgi("/path/to/wordpress"), '/usr/bin/'); 
+app.use("/", php.cgi("/path/to/phpscript"), '/usr/bin/', '/path/to/php.ini'); 
 
 app.listen(9090);
 
@@ -46,11 +54,12 @@ Dependencies
 # php-cgi
 
 * You need to have the interpreter installed in the system in order to use this extension.
-* Alternatively, You can specify the full path of locally available php-cgi path. If custom path not specified in express, it tries to find the system installed php-cgi executable. If still unavailable, the server errors out.
+* Alternatively, You can specify the full path of locally available php-cgi path. 
+* If custom path not specified in express, it tries to find the system installed php-cgi executable. If still unavailable, the server errors out.
 
 License
 -------
 
-Copyright © 2014-2016 Martin K. Schröder <mkschreder.uk@gmail.com>
+Copyright © 2019 - till it works Ganesh B <ganeshsurfs@gmail.com>
 
 The MIT License (MIT) - See [LICENSE](./LICENSE) for further details.

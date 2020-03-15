@@ -1,7 +1,7 @@
 {
   "name": "phpcgijs",
   "description": "Node JS modules for running PHP in CGI mode",
-  "version": "1.0.0-beta2",
+  "version": "1.0.0-beta3",
   "author": {
     "name": "Ganesh",
     "email": "ganeshsurfs@gmail.com"
@@ -19,5 +19,6 @@
     "express": "*",
     "mocha": "*",
     "supertest": "*"
-  }
+  },
+  "keywords": ["node", "nodejs", "php", "cgi", "php-cgi", "run php script"]
 }

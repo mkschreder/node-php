@@ -1,5 +1,5 @@
 
-NodePHPEmbedded - run php scripts like wordpress, drupal, etc with node
+NodeCGIEmbedded - run php scripts like wordpress, drupal, etc with node and cgi counter parts
 ---------------------------------------------------------
 
 With Node PHP Embedded you can leverage the speed of node js and run all of the widely available php scripts directly inside your express site. 
@@ -12,7 +12,7 @@ Installation
 ------------
 
 ```
-npm install node-php
+npm install phpcgijs --save
 ```
 
 Usage
@@ -22,7 +22,7 @@ To run php scripts with node js and express create the following script like bel
 
 ```javascript
 var express = require('express');
-var php = require("node-php"); 
+var php = require("phpcgijs"); 
 var path = require("path"); 
 
 var app = express();
@@ -37,7 +37,6 @@ var app = express();
 app.use("/", php.cgi("/path/to/phpscript"), '/usr/bin/', '/path/to/php.ini'); 
 
 app.listen(9090);
-
 console.log("Server listening!");
 ```
 

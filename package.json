@@ -1,18 +1,18 @@
 {
-  "name": "node-php",
-  "description": "Node JS modules for running wordpress in node js",
-  "version": "0.0.1",
+  "name": "phpcgijs",
+  "description": "Node JS modules for running PHP in CGI mode",
+  "version": "1.0.0-beta2",
   "author": {
-    "name": "Martin K. Schröder",
-    "email": "mkschreder.uk@gmail.com"
+    "name": "Ganesh",
+    "email": "ganeshsurfs@gmail.com"
   },
   "repository": {
-    "type" : "git",
-    "url": "https://github.com/mkschreder/node-php.git"
+    "type": "git",
+    "url": "https://github.com/ganeshkbhat/node-php-cgi.git"
   },
   "main": "./main.js",
   "dependencies": {
-    "shelljs": "^0.6.0"
+    "shelljs": "^0.8.3"
   },
   "devDependencies": {
     "eslint": "*",

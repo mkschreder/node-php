@@ -13,42 +13,46 @@ const util = require('util')
 
 var PHP_CGI = shell.which('php-cgi');
 
-function findFile(url, phpdir, callback) {
-	var file = path.join(phpdir, url.pathname);
+function find_file(url, php_dir, callback) {
+	var file = path.join(php_dir, url.pathname);
 
 	fs.stat(file, function (err, stat) {
-		// file does not exist
+		// File does not exist
 		if (err || stat.isDirectory()) {
-			file = path.join(err ? phpdir : file, 'index.php');
-			console.log(file, file.includes(__dirname))
-
+			if (stat && stat.isDirectory()) {
+				file = path.join(file, 'index.php');
+			}
 			if (file.includes(__dirname)) {
-				
 				fs.exists(file, function (exists) {
-					// console.log("path join", file, exists)
+					console.log("Path join", file, exists)
 					callback(exists && file);
 				});
 			} else {
 				fs.exists(path.join(__dirname, file), function (exists) {
-					// console.log("no path join", file, exists)
+					console.log("No path join", file, exists)
 					callback(exists && file);
 				});
 			}
 		}
 		// file found
 		else {
-			// console.log("folder exists", file)
 			callback(file);
 		}
 	});
 }
 
-function runPHP(req, response, next, url, file, phpCGIPath) {
+function run_php(req, response, next, url, file, php_cgi_path) {
 	var pathinfo = '';
 	var i = req.url.indexOf('.php');
-	if (i > 0) pathinfo = url.pathname.substring(i + 4);
-	else pathinfo = url.pathname;
-	// console.log(req)
+	if (i > 0) {
+		pathinfo = url.pathname.substring(i + 4)
+	} else {
+		pathinfo = url.pathname
+	};
+	
+	console.log("run_php pathinfo", pathinfo)
+	console.log("run_php req", req)
+
 	var env = {
 		SERVER_SIGNATURE: 'NodeJS server at localhost',
 
@@ -61,10 +65,10 @@ function runPHP(req, response, next, url, file, phpCGIPath) {
 		// The virtual path of the script being executed.
 		SCRIPT_NAME: url.pathname,
 
-		SCRIPT_FILENAME: path.join(file),
+		SCRIPT_FILENAME: file,
 
 		// The real path of the script being executed.
-		REQUEST_FILENAME: path.join(file),
+		REQUEST_FILENAME: file,
 
 		// The full URL to the current object requested by the client.
 		SCRIPT_URI: req.url,
@@ -159,8 +163,8 @@ function runPHP(req, response, next, url, file, phpCGIPath) {
 		var res = '', err = '';
 
 		var php;
-		if (!!phpCGIPath && phpCGIPath !== '') {
-			php = child.spawn(phpCGIPath + "/php-cgi", [], {
+		if (!!php_cgi_path && php_cgi_path !== '') {
+			php = child.spawn(php_cgi_path + "/php-cgi", [], {
 				env: env
 			});
 		} else {
@@ -175,13 +179,15 @@ function runPHP(req, response, next, url, file, phpCGIPath) {
 		// php.stdin.resume();
 		// console.log(req.rawBody);
 		// (new Stream(req.rawBody)).pipe(php.stdin);
-		php.stdin.on('error', function () { 
+		
+		php.stdin.on('error', function () {
 			console.error("Error from server")
 		});
 
 		// pipe request stream directly into the php process
 		req.pipe(php.stdin);
 		req.resume();
+
 		// php.stdin.write('\n');
 		// php.stdin.end();
 
@@ -218,26 +224,27 @@ function runPHP(req, response, next, url, file, phpCGIPath) {
 			} else {
 				html = res;
 			}
+			
 			// console.log('STATUS: '+response.statusCode);
+			
 			response.status(response.statusCode).send(html);
 			response.end();
 		});
-
 	} else {
 		response.sendFile(file);
 	}
 }
 
-exports.cgi = function (phproot, phpCGIPath) {
+exports.cgi = function (php_root, php_cgi_path) {
 	return function (req, res, next) {
-		req.pause(); // stop stream until child-process is opened
-
+		// stop stream until child-process is opened
+		req.pause();
 		var url = URL.parse(req.url);
 
-		file = findFile(url, phproot, function (file) {
+		file = find_file(url, php_root, function (file) {
 			if (file) {
-				// console.log("mycall", phpCGIPath, file);
-				runPHP(req, res, next, url, file, phpCGIPath);
+				// console.log("find_file call", php_cgi_path, file);
+				run_php(req, res, next, url, file, php_cgi_path);
 			} else {
 				next();
 			}

@@ -9,6 +9,7 @@ var child = require('child_process');
 var path = require('path');
 var fs = require('fs');
 var shell = require('shelljs');
+const util = require('util')
 
 var PHP_CGI = shell.which('php-cgi');
 
@@ -16,19 +17,29 @@ function findFile(url, phpdir, callback) {
 	var file = path.join(phpdir, url.pathname);
 
 	fs.stat(file, function (err, stat) {
-
 		// file does not exist
 		if (err || stat.isDirectory()) {
 			file = path.join(err ? phpdir : file, 'index.php');
-			fs.exists(file, function (exists) {
-				callback(exists && file);
-			});
+			console.log(file, file.includes(__dirname))
+
+			if (file.includes(__dirname)) {
+				
+				fs.exists(file, function (exists) {
+					// console.log("path join", file, exists)
+					callback(exists && file);
+				});
+			} else {
+				fs.exists(path.join(__dirname, file), function (exists) {
+					// console.log("no path join", file, exists)
+					callback(exists && file);
+				});
+			}
 		}
 		// file found
 		else {
+			// console.log("folder exists", file)
 			callback(file);
 		}
-
 	});
 }
 
@@ -37,7 +48,7 @@ function runPHP(req, response, next, url, file, phpCGIPath) {
 	var i = req.url.indexOf('.php');
 	if (i > 0) pathinfo = url.pathname.substring(i + 4);
 	else pathinfo = url.pathname;
-
+	// console.log(req)
 	var env = {
 		SERVER_SIGNATURE: 'NodeJS server at localhost',
 
@@ -50,10 +61,10 @@ function runPHP(req, response, next, url, file, phpCGIPath) {
 		// The virtual path of the script being executed.
 		SCRIPT_NAME: url.pathname,
 
-		SCRIPT_FILENAME: file,
+		SCRIPT_FILENAME: path.join(file),
 
 		// The real path of the script being executed.
-		REQUEST_FILENAME: file,
+		REQUEST_FILENAME: path.join(file),
 
 		// The full URL to the current object requested by the client.
 		SCRIPT_URI: req.url,
@@ -144,7 +155,7 @@ function runPHP(req, response, next, url, file, phpCGIPath) {
 
 	Object.keys(req.headers).map(function (x) { return env['HTTP_' + x.toUpperCase().replace('-', '_')] = req.headers[x]; });
 
-	if (/.*?\.php$/.test(file)) {
+	if (/.*?\.php$/.test(path.join(__dirname, file))) {
 		var res = '', err = '';
 
 		var php;
@@ -164,22 +175,24 @@ function runPHP(req, response, next, url, file, phpCGIPath) {
 		// php.stdin.resume();
 		// console.log(req.rawBody);
 		// (new Stream(req.rawBody)).pipe(php.stdin);
-		php.stdin.on('error', function () { });
-		req.pipe(php.stdin); // pipe request stream directly into the php process
+		php.stdin.on('error', function () { 
+			console.error("Error from server")
+		});
+
+		// pipe request stream directly into the php process
+		req.pipe(php.stdin);
 		req.resume();
 		// php.stdin.write('\n');
-
 		// php.stdin.end();
 
 		php.stdout.on('data', function (data) {
-			// console.log(data.toString());
 			res += data.toString();
 		});
 		php.stderr.on('data', function (data) {
 			err += data.toString();
 		});
 		php.on('error', function (err) {
-			console.error(err);
+			console.error("error", err);
 		});
 		php.on('exit', function () {
 			// extract headers
@@ -192,8 +205,6 @@ function runPHP(req, response, next, url, file, phpCGIPath) {
 				do {
 					var m = lines[line].split(': ');
 					if (m[0] === '') break;
-
-					// console.log('HEADER: '+m[0]+': '+m[1]);
 					if (m[0] == 'Status') {
 						response.statusCode = parseInt(m[1]);
 					}
@@ -208,15 +219,12 @@ function runPHP(req, response, next, url, file, phpCGIPath) {
 				html = res;
 			}
 			// console.log('STATUS: '+response.statusCode);
-			// console.log(html);
 			response.status(response.statusCode).send(html);
 			response.end();
 		});
 
 	} else {
 		response.sendFile(file);
-		//response.end();
-		//next();
 	}
 }
 
@@ -225,15 +233,14 @@ exports.cgi = function (phproot, phpCGIPath) {
 		req.pause(); // stop stream until child-process is opened
 
 		var url = URL.parse(req.url);
-		findFile(url, phproot, function (file) {
 
+		file = findFile(url, phproot, function (file) {
 			if (file) {
-        // console.log(phpCGIPath);
+				// console.log("mycall", phpCGIPath, file);
 				runPHP(req, res, next, url, file, phpCGIPath);
 			} else {
 				next();
 			}
-
-		});
+		})
 	};
 };

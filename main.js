@@ -4,14 +4,14 @@
 
 /* eslint no-console: 0 */
 
-var URL = require('url');
-var child = require('child_process');
-var path = require('path');
-var fs = require('fs');
-var shell = require('shelljs');
+const URL = require('url');
+const child = require('child_process');
+const path = require('path');
+const fs = require('fs');
+const shell = require('shelljs');
 const util = require('util')
 
-var PHP_CGI = shell.which('php-cgi');
+const PHP_CGI = shell.which('php-cgi');
 
 function find_file(url, php_dir, callback) {
 	var file = path.join(php_dir, url.pathname);

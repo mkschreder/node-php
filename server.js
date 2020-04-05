@@ -7,6 +7,6 @@ var app = express();
 
 var p = path.join("test/php")
 
-app.use("/", php.cgi(p));
+app.use("/", php.cgi(p, {cgi_path: '', ini_path: ''}));
 app.listen(9090, '127.0.0.1');
 console.log("Server listening at 9090!");

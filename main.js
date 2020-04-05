@@ -236,7 +236,7 @@ function run_php(req, response, next, url, file, php_cgi_path) {
 	}
 }
 
-exports.cgi = function (php_root, php_cgi_path) {
+exports.cgi = function (php_root, exe_config) {
 	return function (req, res, next) {
 		
 		// stop stream until child-process is opened
@@ -245,9 +245,8 @@ exports.cgi = function (php_root, php_cgi_path) {
 
 		file = find_file(url, php_root, function (file) {
 			if (file) {
-				
 				// console.log("find_file call", php_cgi_path, file);
-				run_php(req, res, next, url, file, php_cgi_path);
+				run_php(req, res, next, url, file, exe_config.cgi_path);
 			} else {
 				next();
 			}

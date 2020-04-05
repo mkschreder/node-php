@@ -24,12 +24,12 @@ function find_file(url, php_dir, callback) {
 			}
 			if (file.includes(__dirname)) {
 				fs.exists(file, function (exists) {
-					console.log("Path join", file, exists)
+					console.log("File path exists:", file, exists)
 					callback(exists && file);
 				});
 			} else {
 				fs.exists(path.join(__dirname, file), function (exists) {
-					console.log("No path join", file, exists)
+					console.log("No file path exists:", file, exists)
 					callback(exists && file);
 				});
 			}
@@ -41,7 +41,16 @@ function find_file(url, php_dir, callback) {
 	});
 }
 
-function run_php(req, response, next, url, file, php_cgi_path) {
+function strOptions(options) {
+	let optionsArray = Object.entries(options);
+	let newArray = " ";
+	for (let i = 0; i < optionsArray.length; i++) {
+		newArray = newArray + (optionsArray[i][0] + " " + optionsArray[i][1] + " ");
+	}
+	return newArray;
+}
+
+function run_php(req, response, next, url, file, exe_config) {
 	var pathinfo = '';
 	var i = req.url.indexOf('.php');
 	if (i > 0) {
@@ -49,7 +58,7 @@ function run_php(req, response, next, url, file, php_cgi_path) {
 	} else {
 		pathinfo = url.pathname
 	};
-	
+
 	// console.log("run_php pathinfo", pathinfo)
 	// console.log("run_php req", req)
 
@@ -161,17 +170,22 @@ function run_php(req, response, next, url, file, php_cgi_path) {
 
 	if (/.*?\.php$/.test(path.join(__dirname, file))) {
 		var res = '', err = '';
-
 		var php;
-		if (!!php_cgi_path && php_cgi_path !== '') {
-			php = child.spawn(php_cgi_path + "/php-cgi", [], {
+
+		if (!!exe_config.cgi_path && exe_config.cgi_path !== '') {
+			console.log((exe_config.cgi_path.lastIndexOf("/") == exe_config.cgi_path.length - 1 ? exe_config.cgi_path : exe_config.cgi_path + "/") + "php-cgi" + strOptions(exe_config.options));
+
+			php = child.spawn(
+				(exe_config.cgi_path.lastIndexOf("/") == exe_config.cgi_path.length - 1 ?
+					exe_config.cgi_path : exe_config.cgi_path + "/") + "php-cgi",
+				[strOptions(exe_config.options)], {
 				env: env
 			});
 		} else {
 			if (!PHP_CGI) {
 				throw new Error('"php-cgi" cannot be found');
 			}
-			php = child.spawn(PHP_CGI, [], {
+			php = child.spawn(PHP_CGI, [strOptions(exe_config)], {
 				env: env
 			});
 		}
@@ -179,7 +193,7 @@ function run_php(req, response, next, url, file, php_cgi_path) {
 		// php.stdin.resume();
 		// console.log(req.rawBody);
 		// (new Stream(req.rawBody)).pipe(php.stdin);
-		
+
 		php.stdin.on('error', function () {
 			console.error("Error from server")
 		});
@@ -201,7 +215,7 @@ function run_php(req, response, next, url, file, php_cgi_path) {
 			console.error("error", err);
 		});
 		php.on('exit', function () {
-			
+
 			// extract headers
 			php.stdin.end();
 
@@ -225,9 +239,9 @@ function run_php(req, response, next, url, file, php_cgi_path) {
 			} else {
 				html = res;
 			}
-			
+
 			// console.log('STATUS: '+response.statusCode);
-			
+
 			response.status(response.statusCode).send(html);
 			response.end();
 		});
@@ -238,15 +252,15 @@ function run_php(req, response, next, url, file, php_cgi_path) {
 
 exports.cgi = function (php_root, exe_config) {
 	return function (req, res, next) {
-		
+
 		// stop stream until child-process is opened
 		req.pause();
 		var url = URL.parse(req.url);
 
 		file = find_file(url, php_root, function (file) {
 			if (file) {
-				// console.log("find_file call", php_cgi_path, file);
-				run_php(req, res, next, url, file, exe_config.cgi_path);
+				// console.log("find_file call", exe_config.php_cgi_path, file);
+				run_php(req, res, next, url, file, exe_config);
 			} else {
 				next();
 			}

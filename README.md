@@ -57,6 +57,7 @@ var p = path.join("test/php");
 
 // options are PHP-CGI command line options and can be found in documentation
 // It can also be found in readme-php-options.txt (check for update in docs)
+// options ignore -h and --help
 
 app.use("/", php.cgi(p, { cgi_path: '/usr/bin/', options: { "-c": "/etc/php.ini" } }));
 app.listen(9090, '127.0.0.1');

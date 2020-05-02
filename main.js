@@ -122,7 +122,7 @@ function runPHP(req, response, next, url, file) {
     SERVER_PROTOCOL: '',
 
     // The IP address of the computer that sent the request.
-    REMOTE_ADDR: req.ip || '',
+    REMOTE_ADDR: req.headers['x-forwarded-for'] || req.connection.remoteAddress || req.socket.remoteAddress || req.connection.socket.remoteAddress,
 
     // The port from which the request was sent.
     REMOTE_PORT: '',
